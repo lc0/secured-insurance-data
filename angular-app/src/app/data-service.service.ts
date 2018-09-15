@@ -8,7 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 })
 export class DataServiceService {
 
-  private picturesUrl = 'http://9d06ab5b.ngrok.io/getImageCategories';  // URL to web api
+  private picturesUrl = 'http://localhost:5000/getImageCategories';  // URL to web api
 
   constructor(private http: HttpClient) { } 
 
@@ -18,21 +18,19 @@ export class DataServiceService {
     ];
   }
 
-  getDictCategories (): Observable<any[]> {
-    return this.http.get<any[]>(this.picturesUrl)
-      .pipe(
-        catchError(this.handleError('getHeroes', []))
-      );
+  getDictCategories () {  
+    let headers : any[];
+    let counts : any[];
+    
+    this.http.get(this.picturesUrl)
+    .subscribe((data: any) => {
+      headers = data['headers'];
+      counts = data['counts'];
+    });
+
+    return {"headers": headers, "counts": counts};
 
   }
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-   
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead   
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
+  
 
 }

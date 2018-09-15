@@ -2,10 +2,12 @@ from flask import Flask, jsonify
 from random import randint
 from collections import defaultdict
 import datetime, urllib, json, codecs, random, time, requests,pandas as pd
+from flask_cors import CORS
 
 members = ['ali', 'fredrico', 'gabriel', 'sergei']
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def index():
@@ -64,11 +66,23 @@ def getImageCategories():
 	for curr in pics:
 		appearances[curr] += 1
 	reader = codecs.getreader("utf-8")
+
+	app_dict = dict(appearances)
+	list_headers=[]
+	list_counts=[]
+	for k,v in app_dict.items():
+		print k,v
+		list_headers.append(k)
+		list_counts.append(v)
+
 	
-	return json.dumps((dict(appearances)))
+	return json.dumps(
+		{'headers':list_headers,
+		'counts':list_counts})
 
 
-
+if __name__=='__main__':
+    app.run(debug=True, port=5000)
 
 
 
