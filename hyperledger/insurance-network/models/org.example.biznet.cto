@@ -64,15 +64,6 @@ participant InsuredClient extends BaseClient {
   o Integer age optional
 }
 
-transaction tradeHealthMeasurement {
-    --> HealthMeasurement healthMeasurement optional //asset
-    --> Insurance newViewer optional
-}
-
-transaction Trade {
-    --> HealthMeasurement healthMeasurement optional //asset
-}
-
 participant SampleParticipant identified by id {
   o String id
 }
@@ -86,4 +77,9 @@ asset SampleAsset identified by assetId {
 transaction SampleTransaction {
   --> SampleAsset asset
   o String newValue
+}
+
+transaction TradeHealthMeasurement {
+    --> HealthMeasurement healthMeasurement
+    o String[] newViewers
 }
