@@ -72,3 +72,18 @@ transaction tradeHealthMeasurement {
 transaction Trade {
     --> HealthMeasurement healthMeasurement optional //asset
 }
+
+participant SampleParticipant identified by id {
+  o String id
+}
+
+asset SampleAsset identified by assetId {
+  o String assetId
+  --> SampleParticipant owner
+  o String value
+}
+
+transaction SampleTransaction {
+  --> SampleAsset asset
+  o String newValue
+}
