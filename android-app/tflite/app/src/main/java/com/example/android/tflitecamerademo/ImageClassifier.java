@@ -204,20 +204,22 @@ public class ImageClassifier {
 
   /** Prints top-K labels, to be shown in UI as the results. */
   private String printTopKLabels() {
-    for (int i = 0; i < labelList.size(); ++i) {
-      sortedLabels.add(
-          new AbstractMap.SimpleEntry<>(labelList.get(i), labelProbArray[0][i]));
-      if (sortedLabels.size() > RESULTS_TO_SHOW) {
-        sortedLabels.poll();
+      String textToShow = "";
+      final int size = sortedLabels.size();
+      for (int i = 0; i < size; ++i) {
+          Map.Entry<String, Float> label = sortedLabels.poll();
+          textToShow = String.format("\n%s: %4.2f",label.getKey(),label.getValue()) + textToShow;
       }
-    }
-//    String textToShow = "";
-//    final int size = sortedLabels.size();
-//    for (int i = 0; i < size; ++i) {
-//      Map.Entry<String, Float> label = sortedLabels.poll();
-//      textToShow = String.format("\n%s: %4.2f",label.getKey(),label.getValue()) + textToShow;
-//    }
-//    return textToShow;
-      return "";
+
+      for (int i = 0; i < labelList.size(); ++i) {
+          sortedLabels.add(
+              new AbstractMap.SimpleEntry<>(labelList.get(i), labelProbArray[0][i]));
+          Log.d("DEBUG", "adding - " + labelList.get(i) + labelProbArray[0][i]);
+          if (sortedLabels.size() > RESULTS_TO_SHOW) {
+              sortedLabels.poll();
+          }
+      }
+
+      return textToShow;
   }
 }
