@@ -56,12 +56,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -77,6 +93,8 @@ public class Camera2BasicFragment extends Fragment
   private static final String HANDLE_THREAD_NAME = "CameraBackground";
 
   private static final int PERMISSIONS_REQUEST_CODE = 1;
+
+  private String API_URL = "http://6ce5d4a1.ngrok.io/api/";
 
   private final Object lock = new Object();
   private boolean runClassifier = false;
@@ -196,8 +214,9 @@ public class Camera2BasicFragment extends Fragment
             @NonNull CaptureRequest request,
             @NonNull TotalCaptureResult result) {}
       };
+    private PriorityQueue<Map.Entry<String, Float>> predictionList;
 
-  /**
+    /**
    * Shows a {@link Toast} on the UI thread for the classification results.
    *
    * @param text The message to show
@@ -293,9 +312,60 @@ public class Camera2BasicFragment extends Fragment
       textView.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-              Log.d("wtf", "here");
-              String result = classifyFrame();
-              Log.d("wtf", result);
+              Log.d("HELLO", "Clickyyyy");
+
+
+              JSONObject json = new JSONObject();
+              JSONArray predictions = new JSONArray();
+
+              try {
+                  PriorityQueue<Map.Entry<String, Float>> _predictionList = getPredictionList();
+
+                  final int size = _predictionList.size();
+                  Log.d("HELLO", "size up here - " + size);
+                  for (int i = 0; i < size; ++i) {
+                      Map.Entry<String, Float> label = _predictionList.poll();
+
+                      JSONObject item = new JSONObject();
+
+                      try {
+                          item.put("prediction_class", label.getKey());
+                          item.put("probability", label.getValue());
+                          predictions.put(item);
+                      } catch (JSONException e) {
+                          e.printStackTrace();
+                      }
+                      predictions.put(item);
+                  }
+
+                  json.put("predictors", predictions);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+              }
+
+              Log.d("HELLO", "here");
+
+
+              RequestQueue queue = Volley.newRequestQueue(view.getContext());
+
+
+              // Request a string response from the provided URL.
+              JsonObjectRequest stringRequest = new JsonObjectRequest(API_URL + "save/user1", json,
+                      new Response.Listener<JSONObject>() {
+                          @Override
+                          public void onResponse(JSONObject response) {
+                              // Display the first 500 characters of the response string.
+                              Log.d("wtf", "Response is: "+ response.toString());
+                          }
+                      }, new Response.ErrorListener() {
+                  @Override
+                  public void onErrorResponse(VolleyError error) {
+                      Log.e("wtf", "That didn't work!");
+                  }
+              });
+
+// Add the request to the RequestQueue.
+              queue.add(stringRequest);
           }
       });
   }
@@ -662,18 +732,32 @@ public class Camera2BasicFragment extends Fragment
   }
 
   /** Classifies a frame from the preview stream. */
-  public String classifyFrame() {
+  public void classifyFrame() {
     if (classifier == null || getActivity() == null || cameraDevice == null) {
       showToast("Uninitialized Classifier or invalid context.");
-      return "";
+      return;
     }
     Bitmap bitmap =
         textureView.getBitmap(ImageClassifier.DIM_IMG_SIZE_X, ImageClassifier.DIM_IMG_SIZE_Y);
-    String textToShow = classifier.classifyFrame(bitmap);
+    predictionList = classifier.classifyFrame(bitmap);
+    Log.d("DEBUG AND SLEEP", "t" + predictionList.size());
     bitmap.recycle();
+
+    PriorityQueue<Map.Entry<String, Float>> _predictionList = getPredictionList();
+
+
+      String textToShow = "";
+      final int size = _predictionList.size();
+      for (int i = 0; i < size; ++i) {
+          Map.Entry<String, Float> label = _predictionList.poll();
+          textToShow = String.format("\n%s: %4.2f",label.getKey(), label.getValue()) + textToShow;
+          Log.d(TAG, "READY TO PRINT - " + _predictionList.size() + label.getKey() + label.getValue());
+      }
+
+    Log.d(TAG, "READY TO PRINT - " + size);
+
     showToast(textToShow);
 
-    return textToShow;
   }
 
 
@@ -718,5 +802,7 @@ public class Camera2BasicFragment extends Fragment
     }
   }
 
-
+    public PriorityQueue<Map.Entry<String, Float>> getPredictionList() {
+        return new PriorityQueue<>(predictionList);
+    }
 }

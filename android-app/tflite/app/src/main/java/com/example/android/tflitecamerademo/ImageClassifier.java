@@ -106,10 +106,10 @@ public class ImageClassifier {
   }
 
   /** Classifies a frame from the preview stream. */
-  String classifyFrame(Bitmap bitmap) {
+  PriorityQueue<Map.Entry<String, Float>> classifyFrame(Bitmap bitmap) {
     if (tflite == null) {
       Log.e(TAG, "Image classifier has not been initialized; Skipped.");
-      return "Uninitialized Classifier.";
+      return null;
     }
     convertBitmapToByteBuffer(bitmap);
     // Here's where the magic happens!!!
@@ -124,7 +124,7 @@ public class ImageClassifier {
     // print the results
     String textToShow = printTopKLabels();
     textToShow = Long.toString(endTime - startTime) + "ms" + textToShow;
-    return textToShow;
+    return this.sortedLabels;
   }
 
   void applyFilter(){
@@ -211,12 +211,13 @@ public class ImageClassifier {
         sortedLabels.poll();
       }
     }
-    String textToShow = "";
-    final int size = sortedLabels.size();
-    for (int i = 0; i < size; ++i) {
-      Map.Entry<String, Float> label = sortedLabels.poll();
-      textToShow = String.format("\n%s: %4.2f",label.getKey(),label.getValue()) + textToShow;
-    }
-    return textToShow;
+//    String textToShow = "";
+//    final int size = sortedLabels.size();
+//    for (int i = 0; i < size; ++i) {
+//      Map.Entry<String, Float> label = sortedLabels.poll();
+//      textToShow = String.format("\n%s: %4.2f",label.getKey(),label.getValue()) + textToShow;
+//    }
+//    return textToShow;
+      return "";
   }
 }
