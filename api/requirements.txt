@@ -1,3 +1,9 @@
 Flask==1.0.2
 psycopg2==2.7.5
 requests==2.19.1
+
+
+pandas==0.23.4
+dash==0.26.5
+dash-core-components==0.29.0
+dash-html-components==0.12.0
