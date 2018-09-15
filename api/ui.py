@@ -23,7 +23,7 @@ import numpy as np
 # df.loc[future_indices, 'OPENDATE'] -= datetime.timedelta(days=365.25*100)
 
 df = pd.read_json('http://8732a407.ngrok.io/api/HealthMeasurement')
-df['normal'] = np.random.normal(100, 5, 746)
+df['normal'] = np.random.normal(100, 5, df.shape[0])
 
 print(df.head())
 print(df.shape)
@@ -64,6 +64,11 @@ app.layout = html.Div([
             'layout': {}
         }
     ),
+    dcc.Interval(
+        id='interval-component',
+        interval=10*1000, # in milliseconds
+        n_intervals=0
+    ),
 
     html.Div(className='row', children=[
         dcc.Dropdown(
@@ -78,11 +83,21 @@ app.layout = html.Div([
 
 @app.callback(
     dash.dependencies.Output('basic-interactions', 'figure'),
-    [dash.dependencies.Input('User', 'value')])
-def update_graph(User):
-    if User == "All Users":
-        df_new = df.copy()
+    [dash.dependencies.Input('User', 'value'),
+     Input('interval-component', 'n_intervals')
+    ])
+def update_graph(User, n_intervals=0):
+    if n_intervals:
+        _df = pd.read_json('http://8732a407.ngrok.io/api/HealthMeasurement')
+        _df['normal'] = np.random.normal(100, 5, _df.shape[0])
+        global df
+        df = _df.copy()
+        print("Just refreshed. New shape is " + str(df.shape[0]))
+
+    if User is None or User == "All Users":
+        df_new = df
     else:
+        print("Filter for one user" + str(User))
         df_new = df[df['ownerId'] == User]
 
     return {'data': [
@@ -101,14 +116,13 @@ def update_graph(User):
                     'type': 'histogram'
                 },
                 {
-                    'x': df['normal'],
-                    'text': df['normal'],
-                    'customdata': df['ownerId'],
+                    'x': df_new['normal'],
+                    'text': df_new['normal'],
+                    'customdata': df_new['ownerId'],
                     'name': 'Normal',
                     'type': 'histogram'
                 },
     ]}
-
 
 
 
