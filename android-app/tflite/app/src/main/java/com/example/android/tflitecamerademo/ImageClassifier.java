@@ -252,7 +252,7 @@ public class ImageClassifier {
         for (int i = 0; i < labelList.size(); ++i) {
             sortedLabels.add(
                     new AbstractMap.SimpleEntry<>(labelList.get(i), labelProbArray[0][i]));
-            Log.d("DEBUG", "adding - " + labelList.get(i) + labelProbArray[0][i]);
+//            Log.d("DEBUG", "adding - " + labelList.get(i) + labelProbArray[0][i]);
             if (sortedLabels.size() > RESULTS_TO_SHOW) {
                 sortedLabels.poll();
             }

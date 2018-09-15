@@ -10,7 +10,7 @@ def get_hash(unique_str):
     return md5.hexdigest()
 
 
-def send_to_ledger(predictors, user_id):
+def send_to_ledger(predictors, user_id, provider_id):
     url = 'http://8732a407.ngrok.io/api/PictureMeasurement'
 
     payload = {
@@ -18,7 +18,7 @@ def send_to_ledger(predictors, user_id):
         "predictors": [],
         "datetimeMeasurement": datetime.datetime.now().isoformat(),
         "id": str(uuid.uuid1()),
-        "viewers": [],
+        "viewers": [provider_id],
         "ownerId": user_id
     }
 

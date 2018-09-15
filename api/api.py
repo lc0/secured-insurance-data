@@ -18,7 +18,7 @@ working_dir = os.getcwd()
 def save_data(user_id):
     data = request.json
 
-    send_to_ledger(data['predictors'], user_id)
+    send_to_ledger(data['predictors'], user_id, data['provider'])
 
     # TODO: move to a proper place
     db_connection = psycopg2.connect("dbname=postgres user=khomenkos")

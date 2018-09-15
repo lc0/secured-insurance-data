@@ -347,8 +347,27 @@ public class Camera2BasicFragment extends Fragment
      */
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
+
+        TextView insuranceView = (TextView) view.findViewById(R.id.insurance);
+        insuranceView.setOnClickListener(new View.OnClickListener() {
+
+
+            public String currentInsurance;
+
+            @Override
+             public void onClick(View view) {
+                 if (insuranceView.getText() == "Zurich Re") {
+                     insuranceView.setText("AOK");
+                }
+                else
+                    insuranceView.setText("Zurich Re");
+             }
+
+         });
+
         textureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         textView = (TextView) view.findViewById(R.id.text);
+
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -363,7 +382,7 @@ public class Camera2BasicFragment extends Fragment
                     PriorityQueue<Map.Entry<String, Float>> _predictionList = getPredictionList();
 
                     final int size = _predictionList.size();
-                    Log.d("HELLO", "size up here - " + size);
+//                    Log.d("HELLO", "size up here - " + size);
                     for (int i = 0; i < size; ++i) {
                         Map.Entry<String, Float> label = _predictionList.poll();
 
@@ -380,6 +399,8 @@ public class Camera2BasicFragment extends Fragment
 
                     json.put("predictors", predictions);
                     json.put("type", "image_descriptors");
+                    json.put("provider", insuranceView.getText());
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -405,7 +426,7 @@ public class Camera2BasicFragment extends Fragment
                     }
                 });
 
-// Add the request to the RequestQueue.
+                // Add the request to the RequestQueue.
                 queue.add(stringRequest);
             }
         });
@@ -808,10 +829,10 @@ public class Camera2BasicFragment extends Fragment
         for (int i = 0; i < size; ++i) {
             Map.Entry<String, Float> label = _predictionList.poll();
             textToShow = String.format("\n%s: %4.2f", label.getKey(), label.getValue()) + textToShow;
-            Log.d(TAG, "READY TO PRINT - " + _predictionList.size() + label.getKey() + label.getValue());
+//            Log.d(TAG, "READY TO PRINT - " + _predictionList.size() + label.getKey() + label.getValue());
         }
 
-        Log.d(TAG, "READY TO PRINT - " + size);
+//        Log.d(TAG, "READY TO PRINT - " + size);
 
         showToast(textToShow);
 
