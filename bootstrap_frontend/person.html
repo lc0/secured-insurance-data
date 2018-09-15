@@ -146,9 +146,8 @@
             <div class="col-md-4">
                 <div class="profile-work">
                     <p>ACTIONS</p>
-                    <a href="">Send an insurance discount</a><br/>
-                    <a href="">Ask for updating plan</a><br/>
-                    <a href="">Send summary about new plans</a>
+                    <a href="listpeople.html">Go to people list page</a><br/>
+                    <a href="people.html">Go to overall page</a><br/>
                 </div>
             </div>
             <div class="col-md-8">
@@ -252,9 +251,11 @@
 
                 <br>
 
-                <canvas id="heartRateChart" width="400" height="400"></canvas>
+                <canvas id="heartRateChart" width="200" height="100"></canvas>
 
-                <canvas id="categoriesChart" width="400" height="400"></canvas>
+                <canvas id="footStepsChart" width="200" height="100"></canvas>
+
+                <canvas id="categoriesChart" width="200" height="100"></canvas>
 
                 <script>
 
@@ -263,28 +264,34 @@
                     window.catColors = [];
                     function getAndPrintPulledData(){
 
-                        //TODO: put the right link
-                        $.getJSON('http://8732a407.ngrok.io/api/HealthMeasurement',function(data){
-                            d = [
+                        var url_string = window.location.href
+                        var url = new URL(url_string);
+                        var idClient = url.searchParams.get("idClient");
+
+                        var filter = '{"ownerId":""}';
+
+                        $.getJSON('http://8732a407.ngrok.io/api/HealthMeasurement?filter='+encodeURI(filter),function(data){
+                            /*d = [
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000), heartRate: 30},
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000) + 120, heartRate: 20},
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000) + 60, heartRate: 10},
                             ];
-                            console.log(d);
-                            printDataHeartRate(d);
+                            console.log(d);*/
+                            printDataHeartRate(data);
+                            printDataFootSteps(data);
                         });
 
                         //TODO: put the right link
                         $.getJSON('http://8732a407.ngrok.io/api/Insurance',function(data){
-                            d = [
+                            /*d = [
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000), category: "gatto", probability: 10},
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000), category: "pollo", probability: 90},
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000) + 120, category: "gatto", probability: 20},
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000) + 120, category: "pollo", probability: 80},
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000) + 60, category: "gatto", probability: 50},
                                 {id: "DDDD", timestamp: Math.floor(Date.now() / 1000) + 60, category: "pollo", probability: 50},
-                            ];
-                            printDataCategory(d);
+                            ];*/
+                            printDataCategory(data);
                         });
                     }
 
@@ -292,7 +299,7 @@
                         var labels = [];
                         var values = [];
                         for(var i=0; i<pulled_data.length; i++){
-                            var date = new Date(pulled_data[i].datetimeMeasurement);
+                            var date = new Date(pulled_data[i].datetimeBeginStepsInterval);
                             label_to_print = date.getHours() + ":" + (date.getMinutes()<10?'0':'') + date.getMinutes();
 
                             labels.push(label_to_print);
@@ -306,6 +313,43 @@
                                 labels: labels,
                                 datasets: [{
                                     label: 'HeartRate',
+                                    data: values,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255,99,132,1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                animation: false,
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero:true
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                    }
+
+                    function printDataFootSteps(pulled_data){
+                        var labels = [];
+                        var values = [];
+                        for(var i=0; i<pulled_data.length; i++){
+                            var date = new Date(pulled_data[i].datetimeBeginStepsInterval);
+                            label_to_print = date.getHours() + ":" + (date.getMinutes()<10?'0':'') + date.getMinutes();
+
+                            labels.push(label_to_print);
+                            values.push(parseInt(pulled_data[i].numberOfStepsInInterval));
+                        }
+
+                        var ctxS = document.getElementById("footStepsChart").getContext('2d');
+                        var myChart = new Chart(ctxS, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Steps',
                                     data: values,
                                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                                     borderColor: 'rgba(255,99,132,1)',
@@ -380,7 +424,10 @@
                         var myChart = new Chart(ctxC, {
                             type: 'line',
                             data: {
-                                labels: uniqueDates,
+                                labels: uniqueDates.map(function(x){
+                                    var date = new Date(x);
+                                    return date.getHours() + ":" + (date.getMinutes()<10?'0':'') + date.getMinutes();
+                                }),
                                 datasets: datasets
                             },
                             options: {
