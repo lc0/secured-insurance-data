@@ -372,7 +372,6 @@ public class Camera2BasicFragment extends Fragment
                         try {
                             item.put("prediction_class", label.getKey());
                             item.put("probability", label.getValue());
-                            predictions.put(item);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -380,6 +379,7 @@ public class Camera2BasicFragment extends Fragment
                     }
 
                     json.put("predictors", predictions);
+                    json.put("type", "image_descriptors");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
