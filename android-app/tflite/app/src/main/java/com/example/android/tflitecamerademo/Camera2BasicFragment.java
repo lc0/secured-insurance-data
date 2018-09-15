@@ -289,6 +289,15 @@ public class Camera2BasicFragment extends Fragment
   public void onViewCreated(final View view, Bundle savedInstanceState) {
     textureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     textView = (TextView) view.findViewById(R.id.text);
+
+      textView.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+              Log.d("wtf", "here");
+              String result = classifyFrame();
+              Log.d("wtf", result);
+          }
+      });
   }
 
   /** Load the model and labels. */
@@ -653,19 +662,22 @@ public class Camera2BasicFragment extends Fragment
   }
 
   /** Classifies a frame from the preview stream. */
-  private void classifyFrame() {
+  public String classifyFrame() {
     if (classifier == null || getActivity() == null || cameraDevice == null) {
       showToast("Uninitialized Classifier or invalid context.");
-      return;
+      return "";
     }
     Bitmap bitmap =
         textureView.getBitmap(ImageClassifier.DIM_IMG_SIZE_X, ImageClassifier.DIM_IMG_SIZE_Y);
     String textToShow = classifier.classifyFrame(bitmap);
     bitmap.recycle();
     showToast(textToShow);
+
+    return textToShow;
   }
 
-  /** Compares two {@code Size}s based on their areas. */
+
+    /** Compares two {@code Size}s based on their areas. */
   private static class CompareSizesByArea implements Comparator<Size> {
 
     @Override
@@ -705,4 +717,6 @@ public class Camera2BasicFragment extends Fragment
           .create();
     }
   }
+
+
 }

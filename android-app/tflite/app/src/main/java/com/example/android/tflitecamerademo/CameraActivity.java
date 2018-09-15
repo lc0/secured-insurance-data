@@ -17,6 +17,9 @@ package com.example.android.tflitecamerademo;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 /** Main {@code Activity} class for the Camera app. */
 public class CameraActivity extends Activity {
@@ -32,4 +35,5 @@ public class CameraActivity extends Activity {
           .commit();
     }
   }
+
 }
