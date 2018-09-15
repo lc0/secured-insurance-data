@@ -35,7 +35,7 @@ asset HealthMeasurement extends BaseAsset {
   o DateTime datetimeEndStepsInterval
 }
 
-abstract asset Predictor identified by key {
+asset Predictor identified by key {
   o String key
   o Double probability 
 }
