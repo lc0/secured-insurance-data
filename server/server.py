@@ -1,9 +1,14 @@
 from flask import Flask, jsonify
 from random import randint
 from collections import defaultdict
+from scipy.stats import truncnorm
 import datetime, urllib, json, codecs, random, time, requests,pandas as pd
 
 members = ['ali', 'fredrico', 'gabriel', 'sergei']
+
+names = ['anna', 'nachos', 'ronaldo', 'carl', 'ben', 'john', 'nathan', 'ben']
+ids = [6,7,8]
+ages = [12, 34, 32, 21, 23, 22, 26, 32]
 
 app = Flask(__name__)
 
@@ -11,10 +16,21 @@ app = Flask(__name__)
 def index():
     return "Index Page"
 
-def postClient():
+@app.route("/createClients")
+def createClients():
+	for name, id, age in zip(names, ids, ages):
+		postClient(name, id, age)
+	return 'createdClients'
+
+def postClient(name, id, age):
 	url = 'http://8732a407.ngrok.io/api/InsuredClient'
-	r = requests.post(url, json={'name': 'aliabbasjaffri', 'id' : 1500, 'age' : 25})
+	r = requests.post(url, json={'name': name, 'anna' : id, 1 : age})
 	return str(r.status_code)
+
+def get_truncated_normal(mean=65, sd=23, low=40, upp=150):
+    arrayList = truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd).rvs(450)
+    arrayList = arrayList.round().astype(int)
+    return arrayList
 
 def getInsurer():
 	insurers = []
@@ -34,19 +50,29 @@ def getClient():
 
 @app.route("/health")
 def postLoadsData():
-	for day in range(1, 101):
-		date = datetime.datetime.now() - datetime.timedelta(days = day)
-		date = date.strftime('%Y-%m-%dT%H:%M:%S.000')
-		for time in range(1, 4):
-			postHealthMeasurement(date)
 
-def postHealthMeasurement(date):
+	for id in ids:
+		
+		heartRateData = get_truncated_normal()
+		i = 0
+
+		for day in range(1, 101):
+			date = datetime.datetime.now() - datetime.timedelta(days = day)
+			date = date.strftime('%Y-%m-%dT%H:%M:%S.000')
+			for time in range(1, 4):
+				postHealthMeasurement(id, date, heartRateData[i])
+				i=i+1
+				print('i: ' + str(i))
+	return '200 ok'
+
+def postHealthMeasurement(id, date, heartRate):
+	print(id)
 	print(date)
 	url = 'http://8732a407.ngrok.io/api/HealthMeasurement'
-	r = requests.post(url, json={ 'heartRate': randint(60, 150), 'numberOfStepsInInterval' : randint(1, 10), 
+	r = requests.post(url, json={ 'heartRate': heartRate, 'numberOfStepsInInterval' : randint(1, 10), 
 		'datetimeBeginStepsInterval' : date,
 		'datetimeEndStepsInterval' : date,
-		'id' : str(int(time.time())), 'viewers' : getInsurer(), 'ownerId' : getClient() })
+		'id' : str(int(time.time())), 'viewers' : getInsurer(), 'ownerId' : id })
 	print(r.status_code)
 	return str(r.status_code)
 
