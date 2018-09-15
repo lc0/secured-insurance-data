@@ -1,2 +1,14 @@
 .idea/
 .vscode/
+
+
+**/*.pyc
+tf_files
+.idea/
+**/*~
+gradle*
+libs/
+local.properties
+android.iml
+.gradle/
+android/assets/*
