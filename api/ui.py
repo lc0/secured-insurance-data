@@ -1,11 +1,16 @@
 import json
+import datetime
+
 from textwrap import dedent as d
 import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-import datetime
+
+import numpy as np
+
+
 
 # df = pd.read_csv(
 #     ('https://raw.githubusercontent.com/plotly/'
@@ -18,7 +23,10 @@ import datetime
 # df.loc[future_indices, 'OPENDATE'] -= datetime.timedelta(days=365.25*100)
 
 df = pd.read_json('http://8732a407.ngrok.io/api/HealthMeasurement')
+df['normal'] = np.random.normal(100, 5, 746)
+
 print(df.head())
+print(df.shape)
 
 owner_options = df["ownerId"].unique()
 
@@ -38,27 +46,6 @@ app.layout = html.Div([
         id='basic-interactions',
         figure={
             'data': [
-                {
-                    'x': df['heartRate'],
-                    'text': df['heartRate'],
-                    'customdata': df['ownerId'],
-                    'name': 'Heart rate',
-                    'type': 'histogram'
-                },
-                {
-                    'x': df['numberOfStepsInInterval'],
-                    'text': df['numberOfStepsInInterval'],
-                    'customdata': df['ownerId'],
-                    'name': 'Number of Steps',
-                    'type': 'histogram'
-                },
-                # {
-                #     'x': df['datetimeBeginStepsInterval'],
-                #     'text': df['numberOfStepsInInterval'],
-                #     'customdata': df['numberOfStepsInInterval'],
-                #     'name': 'Steps',
-                #     'type': 'bar'
-                # },
                 # {
                 #     'x': df['OPENDATE'],
                 #     'text': df['STRCITY'],
@@ -111,6 +98,13 @@ def update_graph(User):
                     'text': df_new['numberOfStepsInInterval'],
                     'customdata': df_new['ownerId'],
                     'name': 'Number of Steps',
+                    'type': 'histogram'
+                },
+                {
+                    'x': df['normal'],
+                    'text': df['normal'],
+                    'customdata': df['ownerId'],
+                    'name': 'Normal',
                     'type': 'histogram'
                 },
     ]}
