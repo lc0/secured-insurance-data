@@ -8,7 +8,7 @@ from flask import Flask, request, render_template, jsonify, redirect
 
 import psycopg2
 
-from utils import get_hash
+from utils import get_hash, send_to_ledger
 
 app = Flask(__name__)
 working_dir = os.getcwd()
@@ -17,6 +17,8 @@ working_dir = os.getcwd()
 @app.route('/api/save/<user_id>', methods=['POST'])
 def save_data(user_id):
     data = request.json
+
+    send_to_ledger(data['predictors'], user_id)
 
     # TODO: move to a proper place
     db_connection = psycopg2.connect("dbname=postgres user=khomenkos")
