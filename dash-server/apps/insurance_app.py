@@ -19,6 +19,22 @@ styles = {
 }
 
 layout = html.Div([
+
+    html.H1('Insurance cockpit', style={'color': 'black', 'fontSize': 25, 'centered':True}),
+
+    html.Div([
+        html.Img(src='../assets/swiss-re-logo.png', width=150, height=150),
+        html.P('Dashboard containg overview of user data'),
+    ]),
+    html.Div(className='row', children=[
+        dcc.Dropdown(
+                id="User",
+                options=[{
+                    'label': 'user #' + str(i),
+                    'value': i
+                } for i in owner_options],
+                value='All Users')
+    ]),
     dcc.Graph(
         id='basic-interactions',
         figure={
@@ -40,17 +56,7 @@ layout = html.Div([
             ],
             'layout': {}
         }
-    ),
-
-    html.Div(className='row', children=[
-        dcc.Dropdown(
-                id="User",
-                options=[{
-                    'label': 'user #' + str(i),
-                    'value': i
-                } for i in owner_options],
-                value='All Users')
-    ])
+    )
 ])
 
 @app.callback(

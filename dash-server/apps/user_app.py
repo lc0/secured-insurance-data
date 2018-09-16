@@ -1,6 +1,6 @@
 import dash
 import pandas as pd
-from utils import get_clients, get_data_of_count_words
+from utils import get_clients, get_data_of_count_words, generate_table
 import plotly.graph_objs as go
 import dash_html_components as html
 import dash_core_components as dcc
@@ -70,7 +70,10 @@ layout = html.Div([
         ], className="six columns",
         style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}
         ),
-    ], className="row")
+    ], className="row"),
+    html.Div([
+        generate_table(user_df)
+    ])
 ])
 
 

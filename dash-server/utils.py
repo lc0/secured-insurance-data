@@ -3,7 +3,6 @@ from collections import defaultdict
 import dash_html_components as html
 import requests
 
-
 def generate_table(dataframe, max_rows=10):
     return html.Table(
         # Header
@@ -54,3 +53,59 @@ def getImageCategories():
 
     return {'headers':list_headers,
         'counts':list_counts}
+
+COLORS = [{
+'text': '#008000'},
+{'text': '#040404'},
+{'text': '#f41111'}]
+
+def t_style(value):
+    style = {
+        'color': COLORS[1]['text']
+    }
+    return style
+
+def sy_style(value):
+    if value <= 0:
+        style = {
+            'color': COLORS[0]['text']
+        }
+    elif value == 0:
+        style = {
+            'color': COLORS[1]['text']
+        }
+    else:
+        style = {
+            'color': COLORS[2]['text']
+        }
+    return style
+
+def text_style(valued):
+    style = {}
+
+    value = float(valued)
+    if value > 0:
+        style = {
+            'color': COLORS[0]['text']
+        }
+    elif value == 0:
+        style = {
+            'color': COLORS[1]['text']
+        }
+    elif value < 0:
+        style = {
+            'color': COLORS[2]['text']
+        }
+    return style
+
+# reusable componenets
+def generate_table(dataframe, max_rows=10):
+    return html.Table(
+        # Header
+        [html.Tr([html.Th(col) for col in dataframe.columns])] +
+
+        # Body
+        [html.Tr([
+            html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
+        ]) for i in range(min(len(dataframe), max_rows))], className="reaponsive-table"
+    )
