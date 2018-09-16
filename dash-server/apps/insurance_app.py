@@ -90,7 +90,32 @@ def update_graph(User):
                     'name': 'Normal',
                     'type': 'histogram'
                 },
-    ]}
+            ],
+            'layout': {
+                'shapes': [
+                    generate_border(df_new['normal'], 10, color='rgb(55, 128, 191)'),
+                    generate_border(df_new['normal'], 90, color='rgb(55, 128, 191)'),
+                    generate_border(df_new['heartRate'], 10, color='rgb(50, 171, 96)'),
+                    generate_border(df_new['heartRate'], 90, color='rgb(50, 171, 96)'),
+                    generate_border(df_new['numberOfStepsInInterval'], 10, color='rgb(128, 0, 128)'),
+                    generate_border(df_new['numberOfStepsInInterval'], 90, color='rgb(128, 0, 128)'),
+            ]}
+    }
+
+def generate_border(data_array, percentile, color):
+    return {
+                'type': 'line',
+                'x0': np.percentile(data_array, percentile),
+                'y0': 0,
+                'x1': np.percentile(data_array, percentile),
+                'y1': 100,
+                'line': {
+                    'color': color,
+                    'width': 4,
+                    'dash': 'dot'
+                },
+                'name': f"{percentile}th percentile"
+            }
 
 
 
