@@ -41,7 +41,7 @@
             android:textColor="#FFF"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:text="Zurich Re"/>
+            android:text="Swiss Re"/>
     </FrameLayout>
 
     <FrameLayout

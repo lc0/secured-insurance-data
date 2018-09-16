@@ -356,11 +356,11 @@ public class Camera2BasicFragment extends Fragment
 
             @Override
              public void onClick(View view) {
-                 if (insuranceView.getText() == "Zurich Re") {
+                 if (insuranceView.getText() == "Swiss Re") {
                      insuranceView.setText("AOK");
                 }
                 else
-                    insuranceView.setText("Zurich Re");
+                    insuranceView.setText("Swiss Re");
              }
 
          });

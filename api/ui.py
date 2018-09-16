@@ -1,6 +1,8 @@
 import json
 import datetime
 
+from collections import namedtuple
+
 from textwrap import dedent as d
 import dash
 from dash.dependencies import Input, Output
@@ -24,6 +26,13 @@ import numpy as np
 
 df = pd.read_json('http://8732a407.ngrok.io/api/HealthMeasurement')
 df['normal'] = np.random.normal(100, 5, df.shape[0])
+
+# # in case of no data
+# df = pd.DataFrame(np.random.normal(100, 5, 1000))
+# df["ownerId"] = 'fake_user'
+# df["heartRate"] = np.random.normal(60, 10, 1000)
+# df["numberOfStepsInInterval"] = np.random.normal(200, 20, 1000)
+# df["normal"] = np.random.normal(100, 5, 1000)
 
 print(df.head())
 print(df.shape)
@@ -84,7 +93,7 @@ app.layout = html.Div([
 @app.callback(
     dash.dependencies.Output('basic-interactions', 'figure'),
     [dash.dependencies.Input('User', 'value'),
-     Input('interval-component', 'n_intervals')
+    #  Input('interval-component', 'n_intervals')
     ])
 def update_graph(User, n_intervals=0):
     if n_intervals:
@@ -121,8 +130,51 @@ def update_graph(User, n_intervals=0):
                     'customdata': df_new['ownerId'],
                     'name': 'Normal',
                     'type': 'histogram'
+                }
+    ],
+    'layout': {
+        'shapes': [
+            generate_border(df_new['normal'], 10, color='rgb(55, 128, 191)'),
+            generate_border(df_new['normal'], 90, color='rgb(55, 128, 191)'),
+            generate_border(df_new['heartRate'], 10, color='rgb(50, 171, 96)'),
+            generate_border(df_new['heartRate'], 90, color='rgb(50, 171, 96)'),
+            generate_border(df_new['numberOfStepsInInterval'], 10, color='rgb(128, 0, 128)'),
+            generate_border(df_new['numberOfStepsInInterval'], 90, color='rgb(128, 0, 128)'),
+        ]}
+    }
+
+
+def generate_border(data_array, percentile, color):
+    return {
+                'type': 'line',
+                'x0': np.percentile(data_array, percentile),
+                'y0': 0,
+                'x1': np.percentile(data_array, percentile),
+                'y1': 100,
+                'line': {
+                    'color': color,
+                    'width': 4,
+                    'dash': 'dot'
                 },
-    ]}
+                'name': f"{percentile}th percentile"
+            }
+
+Highlight = namedtuple('highlight', ['start', 'end'])
+
+def generate_highlight(data_array, highlight):
+    return {
+            'type': 'rect',
+            'x0': np.percentile(data_array, highlight.start),
+            'y0': 0,
+            'x1': np.percentile(data_array, highlight.end),
+            'y1': 100,
+            'fillcolor': '#d3d3d3',
+            'opacity': 0.2,
+            'line': {
+                'width': 10,
+            }
+        },
+
 
 
 
