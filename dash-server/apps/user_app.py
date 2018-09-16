@@ -1,15 +1,13 @@
 import dash
-import dash_html_components as html
-import dash_core_components as dcc
 import pandas as pd
-from dash.dependencies import Input, Output
 from utils import get_clients, get_data_of_count_words
 import plotly.graph_objs as go
+import dash_html_components as html
+import dash_core_components as dcc
 
-app = dash.Dash()
+from app import app
 
 user_df = pd.read_json('http://localhost:3000/api/HealthMeasurement')
-#user_df = df.sample(frac=0.8, random_state=42)
 owner_options = user_df["ownerId"].unique()
 clients = get_clients()
 
@@ -20,8 +18,8 @@ styles = {
     }
 }
 
-app.layout = html.Div([
-html.H1(children='Hello Dash'),
+layout = html.Div([
+    html.H1(children='Hello Dash'),
     html.Div(children='''
         Dash: A web application framework for Python.
     '''),
@@ -69,7 +67,7 @@ html.H1(children='Hello Dash'),
             }
         }
     ),
-        ], className="six columns", 
+        ], className="six columns",
         style={'width': '49%', 'display': 'inline-block', 'vertical-align': 'middle'}
         ),
     ], className="row")
@@ -114,8 +112,3 @@ def update_graph(owner_id):
 
             }
         }
-
-
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
