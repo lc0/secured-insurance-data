@@ -1,4 +1,4 @@
-# Data Private
+# SID (Secure Insured Data)
 
 Share only the data you want when you want to share. Safely stored in the blockchain.
 
