@@ -4,11 +4,9 @@ from collections import defaultdict
 from scipy.stats import truncnorm
 import datetime, urllib, json, codecs, random, time, requests,pandas as pd
 
-members = ['ali', 'fredrico', 'gabriel', 'sergei']
-
-names = ['anna', 'nachos', 'ronaldo', 'carl', 'ben', 'john', 'nathan', 'ben']
-ids = [6,7,8]
-ages = [12, 34, 32, 21, 23, 22, 26, 32]
+names = ['anna', 'nachos', 'ronaldo', 'carl', 'ben', 'ali', 'fredrico', 'gabriel', 'sergei', 'ben']
+ids = [1,2,3,4,5,6,7,8,9,10]
+ages = [12, 34, 32, 55, 21, 23, 22, 26, 32, 28]
 
 app = Flask(__name__)
 
@@ -24,7 +22,7 @@ def createClients():
 
 def postClient(name, id, age):
 	url = 'http://8732a407.ngrok.io/api/InsuredClient'
-	r = requests.post(url, json={'name': name, 'anna' : id, 1 : age})
+	r = requests.post(url, json={'name': name, 'id' : id, 'age' : age})
 	return str(r.status_code)
 
 def get_truncated_normal(mean=65, sd=23, low=40, upp=150):
@@ -72,7 +70,7 @@ def postHealthMeasurement(id, date, heartRate):
 	r = requests.post(url, json={ 'heartRate': heartRate, 'numberOfStepsInInterval' : randint(1, 10), 
 		'datetimeBeginStepsInterval' : date,
 		'datetimeEndStepsInterval' : date,
-		'id' : str(int(time.time())), 'viewers' : getInsurer(), 'ownerId' : id })
+		'id' : str(int(time.time())), 'viewers' : ['1'], 'ownerId' : id })
 	print(r.status_code)
 	return str(r.status_code)
 
@@ -89,7 +87,6 @@ def getImageCategories():
 
 	for curr in pics:
 		appearances[curr] += 1
-	reader = codecs.getreader("utf-8")
 	
 	return json.dumps((dict(appearances)))
 
