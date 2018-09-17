@@ -2,6 +2,8 @@
 
 Share only the data you want when you want to share. Safely stored in the blockchain.
 
+![slide intro](https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/680/729/datas/gallery.jpg)
+
 ## Getting Started
 
 - Start Hyperledger Fabric
@@ -17,6 +19,6 @@ Share only the data you want when you want to share. Safely stored in the blockc
 
 ## Built With
 
-* [Tensor flow lite](https://www.tensorflow.org/mobile/tflite/) - Analysing meta data information from pictures in cellphone
+* [TensorFlow Lite](https://www.tensorflow.org/mobile/tflite/) - Analysing meta data information from pictures in cellphone
 * [Hyperledger](https://www.ibm.com/blockchain/hyperledger) - Permissioned blockchain for storing data
 * [Dash](https://plot.ly/products/dash/) - Visualization using Python
