@@ -1,0 +1,15 @@
+.reaponsive-table {
+  border: solid;
+}
+.reaponsive-table td {
+  border: solid;
+  border-width: 0.2px;
+}
+
+.reaponsive-table tr:hover {
+  background-color: yellow;
+}
+
+.reaponsive-table td:hover {
+  background-color: red;
+}
